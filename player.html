@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>播放器 - 听澜书阁</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a8a',
+                        secondary: '#f97316',
+                        dark: '#1f2937',
+                        light: '#f3f4f6'
+                    },
+                    fontFamily: {
+                        heading: ['Montserrat', 'sans-serif'],
+                        body: ['Open Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .nav-link:hover {
+            color: #f97316;
+        }
+        .btn-primary {
+            background-color: #1e3a8a;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #1e40af;
+        }
+        .btn-secondary {
+            background-color: #f97316;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #ea580c;
+        }
+        .dark .bg-white {
+            background-color: #1f2937;
+        }
+        .dark .text-gray-800 {
+            color: #f3f4f6;
+        }
+        .dark .text-gray-600 {
+            color: #d1d5db;
+        }
+        .dark .text-gray-700 {
+            color: #e5e7eb;
+        }
+        .dark .bg-gray-50 {
+            background-color: #374151;
+        }
+        .dark .bg-gray-100 {
+            background-color: #4b5563;
+        }
+        .dark .border-gray-200 {
+            border-color: #4b5563;
+        }
+        .dark .shadow-md {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+        .progress-container {
+            position: relative;
+        }
+        .progress-bar {
+            height: 6px;
+            background: #e5e7eb;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .progress-bar:hover {
+            height: 8px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1e3a8a, #f97316);
+            border-radius: 3px;
+            transition: width 0.1s linear;
+        }
+        .dark .progress-bar {
+            background: #4b5563;
+        }
+        .chapter-item {
+            transition: all 0.2s ease;
+        }
+        .chapter-item:hover {
+            background-color: #f3f4f6;
+        }
+        .dark .chapter-item:hover {
+            background-color: #374151;
+        }
+        .chapter-item.active {
+            background-color: #1e3a8a;
+            color: white;
+        }
+        .dark .chapter-item.active {
+            background-color: #f97316;
+        }
+        .control-btn {
+            transition: all 0.2s ease;
+        }
+        .control-btn:hover {
+            transform: scale(1.1);
+        }
+        .play-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            box-shadow: 0 8px 20px rgba(30, 58, 138, 0.4);
+            transition: all 0.3s ease;
+        }
+        .play-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.5);
+        }
+        .dark .play-btn {
+            background: linear-gradient(135deg, #f97316, #fb923c);
+            box-shadow: 0 8px 20px rgba(249, 115, 22, 0.4);
+        }
+        .dark .play-btn:hover {
+            box-shadow: 0 10px 25px rgba(249, 115, 22, 0.5);
+        }
+        .speed-option {
+            transition: all 0.2s ease;
+        }
+        .speed-option:hover {
+            background-color: #f3f4f6;
+        }
+        .speed-option.active {
+            background-color: #1e3a8a;
+            color: white;
+        }
+        .dark .speed-option.active {
+            background-color: #f97316;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <nav class="bg-white dark:bg-gray-800 shadow-md fixed w-full top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <i class="fas fa-headphones text-2xl text-primary"></i>
+                        <span class="text-xl font-bold text-gray-800 dark:text-white font-heading">听澜书阁</span>
+                    </a>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link text-gray-700 dark:text-gray-300 font-medium">首页</a>
+                    <a href="category.html" class="nav-link text-gray-700 dark:text-gray-300 font-medium">分类</a>
+                    <a href="search.html" class="nav-link text-gray-700 dark:text-gray-300 font-medium">搜索</a>
+                    <a href="profile.html" class="nav-link text-gray-700 dark:text-gray-300 font-medium">个人中心</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" placeholder="搜索书籍..." class="w-48 md:w-64 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                        <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-primary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    
+                    <button id="darkModeToggle" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:inline"></i>
+                    </button>
+                    
+                    <a href="login.html" class="btn-primary text-white px-4 py-2 rounded-lg font-medium">
+                        登录
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-16 min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center space-x-4">
+                                <img src="img/book.jpg" alt="书籍封面" class="w-20 h-28 object-cover rounded-lg shadow-lg">
+                                <div>
+                                    <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">追风筝的人</h1>
+                                    <p class="text-gray-600 dark:text-gray-400">卡勒德·胡赛尼</p>
+                                    <div class="flex items-center mt-2">
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <span class="ml-1 text-gray-700 dark:text-gray-300 font-medium">4.8</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                                    <i class="fas fa-list"></i>
+                                </button>
+                                <button class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                                <button class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium text-gray-800 dark:text-white mb-3">第1章：喀布尔的冬天</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                                我成为今天的我，是在1975年某个阴云密布的寒冷冬日，那年我十二岁。我清楚地记得当时自己趴在一堵坍塌的泥墙后面，窥视着那条小巷，旁边是结冰的小溪。许多年过去了，人们说陈年旧事可以被埋葬，然而我终于明白这是错的，因为往事会自行爬上来...
+                            </p>
+                        </div>
+                        
+                        <div class="progress-container mb-6">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-gray-600 dark:text-gray-400 text-sm" id="currentTime">12:34</span>
+                                <span class="text-gray-600 dark:text-gray-400 text-sm" id="totalTime">25:18</span>
+                            </div>
+                            <div class="progress-bar" id="progressBar">
+                                <div class="progress-fill" id="progressFill" style="width: 50%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-center space-x-6 mb-6">
+                            <button class="control-btn text-gray-600 dark:text-gray-300 hover:text-primary" id="shuffleBtn">
+                                <i class="fas fa-random text-xl"></i>
+                            </button>
+                            <button class="control-btn text-gray-600 dark:text-gray-300 hover:text-primary" id="prevChapterBtn">
+                                <i class="fas fa-backward-step text-2xl"></i>
+                            </button>
+                            <button class="control-btn text-gray-600 dark:text-gray-300 hover:text-primary" id="rewindBtn">
+                                <i class="fas fa-backward text-2xl"></i>
+                            </button>
+                            <button class="play-btn flex items-center justify-center text-white" id="playPauseBtn">
+                                <i class="fas fa-pause text-3xl" id="playIcon"></i>
+                            </button>
+                            <button class="control-btn text-gray-600 dark:text-gray-300 hover:text-primary" id="forwardBtn">
+                                <i class="fas fa-forward text-2xl"></i>
+                            </button>
+                            <button class="control-btn text-gray-600 dark:text-gray-300 hover:text-primary" id="nextChapterBtn">
+                                <i class="fas fa-forward-step text-2xl"></i>
+                            </button>
+                            <button class="control-btn text-gray-600 dark:text-gray-300 hover:text-primary" id="repeatBtn">
+                                <i class="fas fa-redo text-xl"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="flex items-center justify-center space-x-2">
+                                <button class="text-gray-600 dark:text-gray-300 hover:text-primary" id="volumeBtn">
+                                    <i class="fas fa-volume-up"></i>
+                                </button>
+                                <input type="range" min="0" max="100" value="80" class="flex-1 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="volumeSlider">
+                            </div>
+                            <div class="flex items-center justify-center space-x-2">
+                                <button class="text-gray-600 dark:text-gray-300 hover:text-primary" id="speedBtn">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                </button>
+                                <select class="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary" id="speedSelect">
+                                    <option value="0.5">0.5x</option>
+                                    <option value="0.75">0.75x</option>
+                                    <option value="1" selected>1.0x</option>
+                                    <option value="1.25">1.25x</option>
+                                    <option value="1.5">1.5x</option>
+                                    <option value="2">2.0x</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center justify-center space-x-2">
+                                <button class="text-gray-600 dark:text-gray-300 hover:text-primary" id="timerBtn">
+                                    <i class="fas fa-clock"></i>
+                                </button>
+                                <select class="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-primary" id="timerSelect">
+                                    <option value="0">关闭</option>
+                                    <option value="15">15分钟</option>
+                                    <option value="30">30分钟</option>
+                                    <option value="45">45分钟</option>
+                                    <option value="60">1小时</option>
+                                    <option value="90">1.5小时</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
+                        <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 font-heading">章节列表</h2>
+                        <div class="space-y-2 max-h-96 overflow-y-auto" id="chapterList">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:col-span-1">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 mb-6">
+                        <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 font-heading">播放统计</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">今日收听</span>
+                                <span class="font-medium text-gray-800 dark:text-white">2小时15分</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">本周收听</span>
+                                <span class="font-medium text-gray-800 dark:text-white">12小时30分</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">累计收听</span>
+                                <span class="font-medium text-gray-800 dark:text-white">156小时</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">完成章节</span>
+                                <span class="font-medium text-gray-800 dark:text-white">15/32</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 mb-6">
+                        <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 font-heading">快捷操作</h2>
+                        <div class="space-y-3">
+                            <button class="w-full flex items-center space-x-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition">
+                                <i class="fas fa-bookmark text-primary"></i>
+                                <span class="text-gray-700 dark:text-gray-300">添加书签</span>
+                            </button>
+                            <button class="w-full flex items-center space-x-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition">
+                                <i class="fas fa-download text-primary"></i>
+                                <span class="text-gray-700 dark:text-gray-300">下载章节</span>
+                            </button>
+                            <button class="w-full flex items-center space-x-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition">
+                                <i class="fas fa-comment text-primary"></i>
+                                <span class="text-gray-700 dark:text-gray-300">添加笔记</span>
+                            </button>
+                            <button class="w-full flex items-center space-x-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition">
+                                <i class="fas fa-share text-primary"></i>
+                                <span class="text-gray-700 dark:text-gray-300">分享进度</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
+                        <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 font-heading">相关推荐</h2>
+                        <div class="space-y-4">
+                            <a href="detail.html" class="flex items-center space-x-4 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-lg transition">
+                                <img src="img/book.jpg" alt="书籍封面" class="w-12 h-16 object-cover rounded">
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-800 dark:text-white text-sm">灿烂千阳</h4>
+                                    <p class="text-gray-500 dark:text-gray-400 text-xs">卡勒德·胡赛尼</p>
+                                </div>
+                                <button class="text-gray-600 dark:text-gray-300 hover:text-primary">
+                                    <i class="fas fa-play-circle text-2xl"></i>
+                                </button>
+                            </a>
+                            <a href="detail.html" class="flex items-center space-x-4 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-lg transition">
+                                <img src="img/book.jpg" alt="书籍封面" class="w-12 h-16 object-cover rounded">
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-800 dark:text-white text-sm">群山回唱</h4>
+                                    <p class="text-gray-500 dark:text-gray-400 text-xs">卡勒德·胡赛尼</p>
+                                </div>
+                                <button class="text-gray-600 dark:text-gray-300 hover:text-primary">
+                                    <i class="fas fa-play-circle text-2xl"></i>
+                                </button>
+                            </a>
+                            <a href="detail.html" class="flex items-center space-x-4 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-lg transition">
+                                <img src="img/book.jpg" alt="书籍封面" class="w-12 h-16 object-cover rounded">
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-800 dark:text-white text-sm">百年孤独</h4>
+                                    <p class="text-gray-500 dark:text-gray-400 text-xs">加西亚·马尔克斯</p>
+                                </div>
+                                <button class="text-gray-600 dark:text-gray-300 hover:text-primary">
+                                    <i class="fas fa-play-circle text-2xl"></i>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="main.js"></script>
+</body>
+</html>

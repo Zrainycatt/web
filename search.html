@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索 - 听澜书阁</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a8a',
+                        secondary: '#f97316',
+                        dark: '#1f2937',
+                        light: '#f3f4f6'
+                    },
+                    fontFamily: {
+                        heading: ['Montserrat', 'sans-serif'],
+                        body: ['Open Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .nav-link:hover {
+            color: #f97316;
+        }
+        .btn-primary {
+            background-color: #1e3a8a;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #1e40af;
+        }
+        .btn-secondary {
+            background-color: #f97316;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #ea580c;
+        }
+        .dark .bg-white {
+            background-color: #1f2937;
+        }
+        .dark .text-gray-800 {
+            color: #f3f4f6;
+        }
+        .dark .text-gray-600 {
+            color: #d1d5db;
+        }
+        .dark .text-gray-700 {
+            color: #e5e7eb;
+        }
+        .dark .bg-gray-50 {
+            background-color: #374151;
+        }
+        .dark .bg-gray-100 {
+            background-color: #4b5563;
+        }
+        .dark .border-gray-200 {
+            border-color: #4b5563;
+        }
+        .dark .shadow-md {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .book-card {
+            transition: all 0.3s ease;
+        }
+        .search-tag {
+            transition: all 0.2s ease;
+        }
+        .search-tag:hover {
+            background-color: #1e3a8a;
+            color: white;
+        }
+        .player-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+        }
+        .progress-bar {
+            height: 4px;
+            background: #e5e7eb;
+            cursor: pointer;
+        }
+        .progress-bar:hover {
+            height: 6px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #1e3a8a;
+            transition: width 0.1s linear;
+        }
+        .dark .progress-bar {
+            background: #4b5563;
+        }
+        .dark .progress-fill {
+            background: #f97316;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <nav class="bg-white dark:bg-gray-800 shadow-md fixed w-full top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <i class="fas fa-headphones text-2xl text-primary"></i>
+                        <span class="text-xl font-bold text-gray-800 dark:text-white font-heading">听澜书阁</span>
+                    </a>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link text-gray-700 dark:text-gray-300 font-medium">首页</a>
+                    <a href="category.html" class="nav-link text-gray-700 dark:text-gray-300 font-medium">分类</a>
+                    <a href="search.html" class="nav-link text-primary font-medium">搜索</a>
+                    <a href="profile.html" class="nav-link text-gray-700 dark:text-gray-300 font-medium">个人中心</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" placeholder="搜索书籍..." class="w-48 md:w-64 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary" id="searchInput">
+                        <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-primary" id="searchBtn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    
+                    <button id="darkModeToggle" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:inline"></i>
+                    </button>
+                    
+                    <a href="login.html" class="btn-primary text-white px-4 py-2 rounded-lg font-medium">
+                        登录
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-16 pb-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+                <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
+                    <div class="flex-1 relative w-full">
+                        <input type="text" placeholder="搜索书名、作者、关键词..." class="w-full px-6 py-4 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" id="mainSearchInput">
+                        <button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-primary" id="mainSearchBtn">
+                            <i class="fas fa-search text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <select class="px-4 py-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary" id="searchType">
+                            <option value="all">全部</option>
+                            <option value="title">书名</option>
+                            <option value="author">作者</option>
+                            <option value="keyword">关键词</option>
+                        </select>
+                        <button class="btn-primary text-white px-8 py-4 rounded-lg font-medium text-lg">
+                            搜索
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 font-heading">热门搜索</h2>
+                <div class="flex flex-wrap gap-3">
+                    <a href="#" class="search-tag px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-primary transition">追风筝的人</a>
+                    <a href="#" class="search-tag px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-primary transition">百年孤独</a>
+                    <a href="#" class="search-tag px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-primary transition">三体</a>
+                    <a href="#" class="search-tag px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-primary transition">活着</a>
+                    <a href="#" class="search-tag px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-primary transition">人类简史</a>
+                    <a href="#" class="search-tag px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-primary transition">小王子</a>
+                    <a href="#" class="search-tag px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-primary transition">红楼梦</a>
+                    <a href="#" class="search-tag px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-primary transition">围城</a>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 font-heading">搜索结果</h2>
+                <div class="flex items-center justify-between mb-6">
+                    <p class="text-gray-600 dark:text-gray-400">找到 <span class="font-medium text-gray-800 dark:text-white">128</span> 个相关结果</p>
+                    <div class="flex items-center space-x-4">
+                        <select class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="relevance">相关度</option>
+                            <option value="hot">热门度</option>
+                            <option value="new">最新</option>
+                            <option value="rating">评分</option>
+                        </select>
+                        <div class="flex items-center space-x-2">
+                            <button class="p-2 rounded-lg bg-primary text-white">
+                                <i class="fas fa-th-large"></i>
+                            </button>
+                            <button class="p-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6" id="searchResults">
+                </div>
+                
+                <div class="flex justify-center mt-8">
+                    <nav class="flex items-center space-x-2">
+                        <button class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition disabled:opacity-50" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="px-4 py-2 rounded-lg bg-primary text-white">1</button>
+                        <button class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">2</button>
+                        <button class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">3</button>
+                        <span class="px-2 text-gray-500">...</span>
+                        <button class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">13</button>
+                        <button class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 font-heading">相关推荐</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6" id="recommendBooks">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="player-bar bg-white dark:bg-gray-800 shadow-lg border-t border-gray-200 dark:border-gray-700" id="playerBar">
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4 flex-1">
+                    <img src="img/book.jpg" alt="书籍封面" class="w-12 h-16 object-cover rounded" id="playerCover">
+                    <div>
+                        <h4 class="font-medium text-gray-800 dark:text-white text-sm" id="playerTitle">未播放</h4>
+                        <p class="text-gray-500 dark:text-gray-400 text-xs" id="playerAuthor">选择书籍开始播放</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-6">
+                    <button class="text-gray-600 dark:text-gray-300 hover:text-primary" id="prevBtn">
+                        <i class="fas fa-backward-step text-xl"></i>
+                    </button>
+                    <button class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center hover:bg-blue-700 transition" id="playPauseBtn">
+                        <i class="fas fa-play text-xl" id="playIcon"></i>
+                    </button>
+                    <button class="text-gray-600 dark:text-gray-300 hover:text-primary" id="nextBtn">
+                        <i class="fas fa-forward-step text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="flex items-center space-x-4 flex-1 justify-end">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-500 dark:text-gray-400 text-xs" id="currentTime">0:00</span>
+                        <span class="text-gray-400 text-xs">/</span>
+                        <span class="text-gray-500 dark:text-gray-400 text-xs" id="totalTime">0:00</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="text-gray-600 dark:text-gray-300 hover:text-primary" id="volumeBtn">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                        <input type="range" min="0" max="100" value="80" class="w-20 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="volumeSlider">
+                    </div>
+                    <button class="text-gray-600 dark:text-gray-300 hover:text-primary" id="speedBtn">
+                        <span class="text-xs font-medium">1.0x</span>
+                    </button>
+                    <button class="text-gray-600 dark:text-gray-300 hover:text-primary" id="timerBtn">
+                        <i class="fas fa-clock"></i>
+                    </button>
+                    <a href="player.html" class="text-gray-600 dark:text-gray-300 hover:text-primary">
+                        <i class="fas fa-expand"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>

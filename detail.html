@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>书籍详情 - 听澜书阁</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a8a',
+                        secondary: '#f97316',
+                        dark: '#1f2937',
+                        light: '#f3f4f6'
+                    },
+                    fontFamily: {
+                        heading: ['Montserrat', 'sans-serif'],
+                        body: ['Open Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .nav-link:hover {
+            color: #f97316;
+        }
+        .btn-primary {
+            background-color: #1e3a8a;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #1e40af;
+        }
+        .btn-secondary {
+            background-color: #f97316;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #ea580c;
+        }
+        .dark .bg-white {
+            background-color: #1f2937;
+        }
+        .dark .text-gray-800 {
+            color: #f3f4f6;
+        }
+        .dark .text-gray-600 {
+            color: #d1d5db;
+        }
+        .dark .text-gray-700 {
+            color: #e5e7eb;
+        }
+        .dark .bg-gray-50 {
+            background-color: #374151;
+        }
+        .dark .bg-gray-100 {
+            background-color: #4b5563;
+        }
+        .dark .border-gray-200 {
+            border-color: #4b5563;
+        }
+        .dark .shadow-md {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+        .chapter-item {
+            transition: all 0.2s ease;
+        }
+        .chapter-item:hover {
+            background-color: #f3f4f6;
+        }
+        .dark .chapter-item:hover {
+            background-color: #374151;
+        }
+        .star-rating i {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .star-rating i:hover,
+        .star-rating i.active {
+            color: #f97316;
+        }
+        .player-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+        }
+        .progress-bar {
+            height: 4px;
+            background: #e5e7eb;
+            cursor: pointer;
+        }
+        .progress-bar:hover {
+            height: 6px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #1e3a8a;
+            transition: width 0.1s linear;
+        }
+        .dark .progress-bar {
+            background: #4b5563;
+        }
+        .dark .progress-fill {
+            background: #f97316;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <nav class="bg-white dark:bg-gray-800 shadow-md fixed w-full top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <i class="fas fa-headphones text-2xl text-primary"></i>
+                        <span class="text-xl font-bold text-gray-800 dark:text-white font-heading">听澜书阁</span>
+                    </a>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link text-gray-700 dark:text-gray-300 font-medium">首页</a>
+                    <a href="category.html" class="nav-link text-gray-700 dark:text-gray-300 font-medium">分类</a>
+                    <a href="search.html" class="nav-link text-gray-700 dark:text-gray-300 font-medium">搜索</a>
+                    <a href="profile.html" class="nav-link text-gray-700 dark:text-gray-300 font-medium">个人中心</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" placeholder="搜索书籍..." class="w-48 md:w-64 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                        <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-primary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    
+                    <button id="darkModeToggle" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:inline"></i>
+                    </button>
+                    
+                    <a href="login.html" class="btn-primary text-white px-4 py-2 rounded-lg font-medium">
+                        登录
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-16 pb-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="md:col-span-1">
+                        <img src="https://via.placeholder.com/300x400" alt="书籍封面" class="w-full rounded-lg shadow-lg">
+                    </div>
+                    <div class="md:col-span-2">
+                        <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-4 font-heading">追风筝的人</h1>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <span class="ml-1 text-gray-700 dark:text-gray-300 font-medium">4.8</span>
+                            </div>
+                            <span class="text-gray-500 dark:text-gray-400">|</span>
+                            <span class="text-gray-600 dark:text-gray-400">卡勒德·胡赛尼</span>
+                            <span class="text-gray-500 dark:text-gray-400">|</span>
+                            <span class="text-gray-600 dark:text-gray-400">小说</span>
+                        </div>
+                        
+                        <div class="flex items-center space-x-4 mb-6">
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">热门</span>
+                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">免费</span>
+                            <span class="text-gray-600 dark:text-gray-400 text-sm">12.5万次播放</span>
+                        </div>
+                        
+                        <p class="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+                            12岁的阿富汗富家少爷阿米尔与仆人哈桑情同手足。然而，在一场风筝比赛后，发生了一件悲惨不堪的事，阿米尔为自己的懦弱感到自责和痛苦，逼走了哈桑，不久，自己也跟随父亲逃往美国。
+                        </p>
+                        
+                        <div class="flex items-center space-x-4 mb-6">
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-gray-800 dark:text-white">32</p>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm">章节</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-gray-800 dark:text-white">12.5</p>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm">小时</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-gray-800 dark:text-white">256</p>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm">评论</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-4">
+                            <button class="btn-secondary text-white px-8 py-3 rounded-lg font-medium flex items-center space-x-2" onclick="playBook()">
+                                <i class="fas fa-play"></i>
+                                <span>立即播放</span>
+                            </button>
+                            <button class="btn-primary text-white px-8 py-3 rounded-lg font-medium flex items-center space-x-2" id="addToShelfBtn">
+                                <i class="fas fa-plus"></i>
+                                <span>加入书架</span>
+                            </button>
+                            <button class="border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                                <i class="fas fa-share-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+                        <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 font-heading">章节列表</h2>
+                        <div class="space-y-2" id="chapterList">
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+                        <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 font-heading">内容简介</h2>
+                        <div class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                            <p class="mb-4">《追风筝的人》是美籍阿富汗作家卡勒德·胡赛尼的第一部长篇小说，讲述了12岁的阿富汗富家少爷阿米尔与仆人哈桑情同手足。然而，在一场风筝比赛后，发生了一件悲惨不堪的事，阿米尔为自己的懦弱感到自责和痛苦，逼走了哈桑，不久，自己也跟随父亲逃往美国。</p>
+                            <p class="mb-4">成年后的阿米尔始终无法原谅自己当年对哈桑的背叛。为了赎罪，阿米尔再度踏上暌违二十多年的故乡，希望能为不幸的好友尽最后一点心力，却发现了一个惊天谎言，儿时的噩梦再度重演...</p>
+                            <p>这部小说以阿富汗君主制的最后岁月为背景，讲述了主人公阿米尔与仆人哈桑之间的友谊、背叛与救赎的故事。小说通过阿米尔的视角，展现了阿富汗社会的变迁和人性的复杂。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 font-heading">用户评价</h2>
+                        <div class="flex items-center space-x-4 mb-6">
+                            <div class="text-center">
+                                <p class="text-4xl font-bold text-gray-800 dark:text-white">4.8</p>
+                                <div class="flex items-center justify-center mt-1">
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star-half-alt text-yellow-400"></i>
+                                </div>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">256条评价</p>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2 mb-1">
+                                    <span class="text-gray-600 dark:text-gray-400 text-sm w-8">5星</span>
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-yellow-400 h-2 rounded-full" style="width: 70%"></div>
+                                    </div>
+                                    <span class="text-gray-600 dark:text-gray-400 text-sm w-12">70%</span>
+                                </div>
+                                <div class="flex items-center space-x-2 mb-1">
+                                    <span class="text-gray-600 dark:text-gray-400 text-sm w-8">4星</span>
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-yellow-400 h-2 rounded-full" style="width: 20%"></div>
+                                    </div>
+                                    <span class="text-gray-600 dark:text-gray-400 text-sm w-12">20%</span>
+                                </div>
+                                <div class="flex items-center space-x-2 mb-1">
+                                    <span class="text-gray-600 dark:text-gray-400 text-sm w-8">3星</span>
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-yellow-400 h-2 rounded-full" style="width: 7%"></div>
+                                    </div>
+                                    <span class="text-gray-600 dark:text-gray-400 text-sm w-12">7%</span>
+                                </div>
+                                <div class="flex items-center space-x-2 mb-1">
+                                    <span class="text-gray-600 dark:text-gray-400 text-sm w-8">2星</span>
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-yellow-400 h-2 rounded-full" style="width: 2%"></div>
+                                    </div>
+                                    <span class="text-gray-600 dark:text-gray-400 text-sm w-12">2%</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-gray-600 dark:text-gray-400 text-sm w-8">1星</span>
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-yellow-400 h-2 rounded-full" style="width: 1%"></div>
+                                    </div>
+                                    <span class="text-gray-600 dark:text-gray-400 text-sm w-12">1%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                            <h3 class="font-medium text-gray-800 dark:text-white mb-4">添加评价</h3>
+                            <div class="star-rating flex items-center space-x-2 mb-4">
+                                <span class="text-gray-600 dark:text-gray-400 mr-2">评分:</span>
+                                <i class="fas fa-star text-gray-300 text-xl" data-rating="1"></i>
+                                <i class="fas fa-star text-gray-300 text-xl" data-rating="2"></i>
+                                <i class="fas fa-star text-gray-300 text-xl" data-rating="3"></i>
+                                <i class="fas fa-star text-gray-300 text-xl" data-rating="4"></i>
+                                <i class="fas fa-star text-gray-300 text-xl" data-rating="5"></i>
+                            </div>
+                            <textarea class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary mb-4" rows="4" placeholder="分享您的听书感受..."></textarea>
+                            <button class="btn-primary text-white px-6 py-2 rounded-lg font-medium">提交评价</button>
+                        </div>
+                        
+                        <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6">
+                            <h3 class="font-medium text-gray-800 dark:text-white mb-4">最新评价</h3>
+                            <div class="space-y-4">
+                                <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
+                                    <div class="flex items-center space-x-3 mb-2">
+                                        <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-medium">张</div>
+                                        <div>
+                                            <p class="font-medium text-gray-800 dark:text-white">张三</p>
+                                            <div class="flex items-center space-x-2">
+                                                <div class="flex items-center">
+                                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                                </div>
+                                                <span class="text-gray-500 dark:text-gray-400 text-sm">2024-01-15</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300">非常感人的一本书，主播的声音很有感染力，推荐大家收听！</p>
+                                </div>
+                                
+                                <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
+                                    <div class="flex items-center space-x-3 mb-2">
+                                        <div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center text-white font-medium">李</div>
+                                        <div>
+                                            <p class="font-medium text-gray-800 dark:text-white">李四</p>
+                                            <div class="flex items-center space-x-2">
+                                                <div class="flex items-center">
+                                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                                    <i class="fas fa-star-half-alt text-yellow-400 text-sm"></i>
+                                                </div>
+                                                <span class="text-gray-500 dark:text-gray-400 text-sm">2024-01-10</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300">故事情节紧凑，人物刻画深刻，是一本值得反复收听的好书。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:col-span-1">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+                        <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 font-heading">作者简介</h2>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <img src="https://via.placeholder.com/80x80" alt="作者头像" class="w-16 h-16 rounded-full object-cover">
+                            <div>
+                                <h3 class="font-medium text-gray-800 dark:text-white">卡勒德·胡赛尼</h3>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm">阿富汗裔美国作家</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                            卡勒德·胡赛尼，1965年生于喀布尔，后随父亲逃往美国。毕业于加州大学圣地亚哥医学系，现居加州执业。《追风筝的人》是他的第一本小说，因书中角色刻画生动，故事情节震撼感人，出版后大获好评，获得各项新人奖，并跃居全美各大畅销排行榜。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+                        <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 font-heading">主播信息</h2>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <img src="https://via.placeholder.com/80x80" alt="主播头像" class="w-16 h-16 rounded-full object-cover">
+                            <div>
+                                <h3 class="font-medium text-gray-800 dark:text-white">王主播</h3>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm">专业配音演员</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="text-center">
+                                <p class="text-lg font-bold text-gray-800 dark:text-white">156</p>
+                                <p class="text-gray-500 dark:text-gray-400 text-xs">作品</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-lg font-bold text-gray-800 dark:text-white">2.3万</p>
+                                <p class="text-gray-500 dark:text-gray-400 text-xs">粉丝</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-lg font-bold text-gray-800 dark:text-white">4.9</p>
+                                <p class="text-gray-500 dark:text-gray-400 text-xs">评分</p>
+                            </div>
+                        </div>
+                        <button class="w-full btn-primary text-white py-2 rounded-lg font-medium">关注主播</button>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4 font-heading">相关推荐</h2>
+                        <div class="space-y-4">
+                            <a href="detail.html" class="flex items-center space-x-4 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-lg transition">
+                                <img src="img/book.jpg" alt="书籍封面" class="w-12 h-16 object-cover rounded">
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-800 dark:text-white text-sm">灿烂千阳</h4>
+                                    <p class="text-gray-500 dark:text-gray-400 text-xs">卡勒德·胡赛尼</p>
+                                    <div class="flex items-center mt-1">
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <span class="text-gray-600 dark:text-gray-400 text-xs ml-1">4.7</span>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="detail.html" class="flex items-center space-x-4 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-lg transition">
+                                <img src="img/book.jpg" alt="书籍封面" class="w-12 h-16 object-cover rounded">
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-800 dark:text-white text-sm">群山回唱</h4>
+                                    <p class="text-gray-500 dark:text-gray-400 text-xs">卡勒德·胡赛尼</p>
+                                    <div class="flex items-center mt-1">
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <span class="text-gray-600 dark:text-gray-400 text-xs ml-1">4.6</span>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="detail.html" class="flex items-center space-x-4 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-lg transition">
+                                <img src="img/book.jpg" alt="书籍封面" class="w-12 h-16 object-cover rounded">
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-800 dark:text-white text-sm">百年孤独</h4>
+                                    <p class="text-gray-500 dark:text-gray-400 text-xs">加西亚·马尔克斯</p>
+                                    <div class="flex items-center mt-1">
+                                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                        <span class="text-gray-600 dark:text-gray-400 text-xs ml-1">4.9</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="player-bar bg-white dark:bg-gray-800 shadow-lg border-t border-gray-200 dark:border-gray-700" id="playerBar">
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4 flex-1">
+                    <img src="img/book.jpg" alt="书籍封面" class="w-12 h-16 object-cover rounded" id="playerCover">
+                    <div>
+                        <h4 class="font-medium text-gray-800 dark:text-white text-sm" id="playerTitle">未播放</h4>
+                        <p class="text-gray-500 dark:text-gray-400 text-xs" id="playerAuthor">选择书籍开始播放</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-6">
+                    <button class="text-gray-600 dark:text-gray-300 hover:text-primary" id="prevBtn">
+                        <i class="fas fa-backward-step text-xl"></i>
+                    </button>
+                    <button class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center hover:bg-blue-700 transition" id="playPauseBtn">
+                        <i class="fas fa-play text-xl" id="playIcon"></i>
+                    </button>
+                    <button class="text-gray-600 dark:text-gray-300 hover:text-primary" id="nextBtn">
+                        <i class="fas fa-forward-step text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="flex items-center space-x-4 flex-1 justify-end">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-500 dark:text-gray-400 text-xs" id="currentTime">0:00</span>
+                        <span class="text-gray-400 text-xs">/</span>
+                        <span class="text-gray-500 dark:text-gray-400 text-xs" id="totalTime">0:00</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="text-gray-600 dark:text-gray-300 hover:text-primary" id="volumeBtn">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                        <input type="range" min="0" max="100" value="80" class="w-20 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="volumeSlider">
+                    </div>
+                    <button class="text-gray-600 dark:text-gray-300 hover:text-primary" id="speedBtn">
+                        <span class="text-xs font-medium">1.0x</span>
+                    </button>
+                    <button class="text-gray-600 dark:text-gray-300 hover:text-primary" id="timerBtn">
+                        <i class="fas fa-clock"></i>
+                    </button>
+                    <a href="player.html" class="text-gray-600 dark:text-gray-300 hover:text-primary">
+                        <i class="fas fa-expand"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
